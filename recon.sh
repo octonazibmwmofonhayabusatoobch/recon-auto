@@ -14,7 +14,7 @@ cat *_$target | sort -u > allsubs.txt
 rm *_$target
 
 # find a way to remove aws and other clouds from asn look up to include to live sub checks
-amass enum -d $target -o enum.amass
+timeout 6h amass enum -d $target -o enum.amass
 cat enum.amass | grep ASN | awk '{print $1}' | sed '175d;159d;14d;15d;20d;24d;25d;65d;79d;109d;110d;116d;121d' | sed 's/[^ ]* */AS&/g' | sort -u | sed 's/\x1b\[[0-9;]*m//g' > asn.list
 while IFS= read -r line; do
         whois -h whois.radb.net -- "-i origin $line" | grep -Eo "([0-9.]+){4}/[0-9]+" >> netblocks.list
